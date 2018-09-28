@@ -28,7 +28,7 @@
 # RECENT CHANGES TO SCRIPT                                                        #
 # LOAD PACKAGES                                                                   #
 # READ IN AND PREPARE DATA                                                        #
-# MANIPULATE DATA                                                                 #   
+# CLEAN UP DATA                                                                   #   
 #                                                                                 #
 ###################################################################################
 
@@ -43,6 +43,9 @@
 ###################################################################################
 
 library(tidyverse)
+library(magrittr)
+library(psych)
+
 
 ###################################################################################
 # READ IN AND PREPARE DATA                                                        #
@@ -51,7 +54,7 @@ library(tidyverse)
 morpho_raw <- read_csv("~/Dropbox/Datasets/Tidepool_Urchins/Grupe_data/Morphology_Grupe_2006_Thesis.csv")
 
 ###################################################################################
-# MANIPULATE DATA                                                                 #
+# CLEAN UP DATA                                                                   #
 ###################################################################################
 
 # Delete "Pd" column
@@ -106,7 +109,121 @@ morpho_9 <- morpho_8 %>%
   replace_na(list(Go2 = "", X10 = "", Go = "")) %>%
   unite("Go", c("Go2", "X10", "Go"), sep = "")
 
-############### SUBSECTION HERE
+# Unite Gu, Gu2, Gu3, and X12
+morpho_10 <- morpho_9 %>%
+  replace_na(list(Gu = "", Gu2 = "", Gu3 = "", X12 = "")) %>%
+  unite("Gu", c("Gu", "Gu2", "Gu3", "X12"), sep = "")
+
+# Separate La Ja into four columns
+morpho_11 <- morpho_10 %>%
+  separate(col = "La Ja",
+           into = c("La", "Ja", "Sk2", "Te2"),
+           sep = (" "))
+
+# Unite Sk and Sk2
+morpho_12 <- morpho_11 %>%
+  replace_na(list(Sk = "", Sk2 = "")) %>%
+  unite("Sk", c("Sk", "Sk2"), sep = "")
+
+# Unite Te and Te2
+morpho_13 <- morpho_12 %>%
+  replace_na(list(Te = "", Te2 = "")) %>%
+  unite("Te", c("Te", "Te2"), sep = "")
+
+# make numbers numeric and the rest factors
+str(morpho_13)
+morpho_13[4:18] <- as.numeric(as.matrix(morpho_13[4:18]))
+morpho_13$Si %<>% factor
+morpho_13$Ti %<>% factor
+morpho_13$Mi %<>% factor
+
+Morpho_clean <- morpho_13 
+
+# Si – Site
+# Ti – Tidepool
+# Mi - Microhabitat
+# Di – Test diameter (cm)
+# He – Test height (cm)
+# Pd – Peristomial diameter (cm)
+# S1 – 1 st Spine (cm)
+# S2 – 2 nd Spine (cm)
+# S3 – 3 rd Spine (cm)
+# Sp – Average spine length (cm)
+# Ma – Mass (g)
+# Cs – Compression strength
+# Go – Gonad mass
+# Gu – Gut mass
+# La – Lantern mass
+# Ja – Jaw Length
+# Sk – Skeletal mass
+# Te – Test thickness
+
+###################################################################################
+# URCHIN VOLUME                                                                   #
+###################################################################################
+
+# Q: Is there a difference in urchin volume between pit and non-pit urchins?
+# A: NO
+
+Volume <- Morpho_clean
+
+# Calculate volume column
+Volume$Vo <- (4/3)*(pi*(((Volume$Di)/2)^3))
+
+# Plot volume vs. habitat
+ggplot(Volume, aes(Mi, Vo)) +
+  geom_boxplot()
+
+t.test(Vo ~ Mi, data = Volume)
+# Welch Two Sample t-test
+# data:  Vo by Mi
+# t = 1.7991, df = 166.86, p-value = 0.07381
+
+ggplot(Volume, aes(Mi, Vo)) +
+  geom_boxplot() +
+  facet_grid(~Si)
+
+###################################################################################
+# MORPHOLOGICAL CHARACTERS                                                        #
+###################################################################################
+
+# Q: How are morphological charaters of all urchins pooled related?
+# A: Mass and length covary, jaw size seem asymptotic with mass.
+
+# Pairs plot for all metrics
+pairs.panels(Morpho_clean[4:18], 
+             scale = TRUE, pch=21, ellipses = FALSE)
+
+###################################################################################
+# MORPHOLOGICAL CHARACTERS                                                        #
+###################################################################################
+
+# Q: Do any of the measured characters predict pit-dwelling?
+# A: 
+
+Morpho_binom <- Morpho_clean
+
+# Make pit/non-pit into binomials (0,1)
+Morpho_binom$Mi <- Morpho_binom$Mi %>%
+  recode("P" = "1", "NP" = "0")
+Morpho_binom$Mi <- as.numeric(as.character(Morpho_binom$Mi))
+
+# Create null model for comparison
+morph_mod_null <- glm(Mi ~ 1, data = Morpho_binom, family = binomial(link = "logit"))
+
+# Full model
+morph_mod_full <- glm(Mi ~., data = Morpho_binom, family = binomial(link = "logit"))
+
+# Stepwise comparison
+step(morph_mod_null,
+     scope = list(upper = morph_mod_full),
+     direction = "both",
+     test = "Chisq",
+     data = Morpho_binom)
+
+# 'Best' model fit
+morph_mod_fin <- glm(Mi ~ S2 + Ja + Sk + Ma + Gu + Pd, data = Morpho_binom, family = binomial(link = "logit"))
+
 
 #####
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#
