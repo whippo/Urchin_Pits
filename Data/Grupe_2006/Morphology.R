@@ -227,3 +227,20 @@ morph_mod_fin <- glm(Mi ~ S2 + Ja + Sk + Ma + Gu + Pd, data = Morpho_binom, fami
 
 #####
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#
+
+#SCRATCH PAD
+
+# mean test diameter by site and type of urchin
+Morpho_clean %>%
+  group_by(Si, Mi) %>%
+  summarize(mean(Di))
+
+# mean test height by site and type of urchin
+Morpho_clean %>%
+  group_by(Si, Mi) %>%
+  summarize(mean(He))
+
+# mean spine lengths
+Morpho_clean %>%
+  group_by(Si, Mi) %>%
+  summarize(mean(S1:S3))
