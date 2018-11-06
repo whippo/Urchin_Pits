@@ -224,6 +224,7 @@ step(morph_mod_null,
 # 'Best' model fit
 morph_mod_fin <- glm(Mi ~ S2 + Ja + Sk + Ma + Gu + Pd, data = Morpho_binom, family = binomial(link = "logit"))
 
+summary(morph_mod_fin)
 
 #####
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#

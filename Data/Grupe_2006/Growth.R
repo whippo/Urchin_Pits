@@ -57,7 +57,7 @@ growth_raw <- read_csv("~/Dropbox/Datasets/Tidepool_Urchins/Grupe_data/Growth_Gr
 # CLEAN UP DATA                                                                   #
 ###################################################################################
 
-growth_raw$X11
+levels(growth_raw$X11)
 
 # Delete "X11" column
 growth_1 <- growth_raw %>%
@@ -69,34 +69,53 @@ growth_2 <- growth_1 %>%
            into = c("Ti", "Mi2"),
            sep = (" "))
 
+# Copy Mi column rows 1-16 to Mi2 column rows 1-16
+growth_3 <- growth_2
+growth_3[1:16, 3] <- growth_2[1:16, 4]
+
+# Rename X12 to 'Sex'
+growth_4 <- growth_3
+names(growth_4)[names(growth_4)=="X12"] <- "Sex"
+
+# duplicate column # so the original can be overwritten
+growth_5 <- growth_4 
+growth_5$'#1' <- growth_5$'#'
+
+#### Skip ahead for sex ratio analysis
+#### BELOW WAS PREVIOUS ATTEMPT
+
+# Separate 'EsGr LaGr' values and rename 'Years Sex' as 'Years'
+growth_5 <- growth_4 %>%
+  separate(col = "EsGr LaGr",
+           into = c("EsGr", "LaGr", "Years1"), 
+           sep = (" "))
+names(growth_5)[names(growth_5)=="Years Sex"] <- "Years"
+
+# Unite Years1 values w/ Years column
+growth_6 <- growth_5 %>%
+  replace_na(list(Years1 = "", Years = "")) %>% 
+  unite("Years", c("Years1", "Years"), sep = "")
+
+# Separate Jaw0 TotGr into 5 columns
+growth_7 <- growth_6 %>%
+  separate(col = "Jaw0 TotGr",
+           into = c("Jaw0", "TotGr", "EsGr1", "LaGr1", "Years1"),
+           sep = (" "))
+
+# Unite new Years1 values w/ Years column
+growth_8 <- growth_7 %>%
+  replace_na(list(Years1 = "")) %>% 
+  unite("Years", c("Years1", "Years"), sep = "")
+
+# Separate Jaw1 into 5 columns
+growth_7 <- growth_6 %>%
+  separate(col = "Jaw0 TotGr",
+           into = c("Jaw1", "Jaw0", "TotGr", "EsGr1", "LaGr1", "Years1"),
+           sep = (" "))
+
 ##### BELOW THIS IS MORPHO CODE TO BE CANNIBALIZED
 
 # more code!!!!!
-
-# Separate "S2 S3" into two columns
-morpho_3 <- morpho_2 %>%
-  separate(col = "S2 S3",
-           into = c("S2", "S3"),
-           sep = (" "))
-
-# Separate "Sp Ma Cs" into three columns
-morpho_4 <- morpho_3 %>%
-  separate(col = "Sp Ma Cs",
-           into = c("Sp", "Ma", "Cs"),
-           sep = (" "),
-           extra = "merge")
-
-# Separate "Cs" column into three column
-morpho_5 <- morpho_4 %>%
-  separate(col = "Cs",
-           into = c("Cs", "Go2", "Gu2"),
-           sep = (" "))
-
-# Separate X9 column into two columns
-morpho_6 <- morpho_5 %>%
-  separate(col = "X9",
-           into = c("X9", "X10"),
-           sep = (" "))
 
 # Unite X9 values w/ Cs column
 morpho_7 <- morpho_6 %>%
@@ -145,48 +164,66 @@ morpho_13$Mi %<>% factor
 Morpho_clean <- morpho_13 
 
 # Si – Site
+# Mi – Microhabitat (P or NP)
+# Di – Diameter
+# Jaw1 – Jaw size at collection
+# TotGr – Total growth
+# LaGr – Labial growth
+# Sex – M(ale) or F(emale)
 # Ti – Tidepool
-# Mi - Microhabitat
-# Di – Test diameter (cm)
-# He – Test height (cm)
-# Pd – Peristomial diameter (cm)
-# S1 – 1 st Spine (cm)
-# S2 – 2 nd Spine (cm)
-# S3 – 3 rd Spine (cm)
-# Sp – Average spine length (cm)
-# Ma – Mass (g)
-# Cs – Compression strength
-# Go – Gonad mass
-# Gu – Gut mass
-# La – Lantern mass
-# Ja – Jaw Length
-# Sk – Skeletal mass
-# Te – Test thickness
+# # – ID Number
+# He – Height
+# Jaw0 – Jaw size at tagging
+# EsGr – Esophageal Growth
+# Ye – Years of growth
 
 ###################################################################################
-# URCHIN VOLUME                                                                   #
+# SEX RATIOS                                                                      #
 ###################################################################################
 
-# Q: Is there a difference in urchin volume between pit and non-pit urchins?
-# A: NO
+# Q: Is there a difference in urchin sex-ratio between pit and non-pit urchins?
+# A: 
 
-Volume <- Morpho_clean
+sexratio <- growth_5 %>%
+  select(Si, Ti, Mi2, Sex)
 
-# Calculate volume column
-Volume$Vo <- (4/3)*(pi*(((Volume$Di)/2)^3))
+sexratio[is.na(sexratio)] <- "U"
 
-# Plot volume vs. habitat
-ggplot(Volume, aes(Mi, Vo)) +
-  geom_boxplot()
+# remove header rows
+sexratio <- sexratio %>%
+  subset(Sex != "Sex")
 
-t.test(Vo ~ Mi, data = Volume)
-# Welch Two Sample t-test
-# data:  Vo by Mi
-# t = 1.7991, df = 166.86, p-value = 0.07381
+# Plot sex vs. habitat
+ggplot(sexratio, aes(Sex)) +
+  geom_bar() +
+  facet_grid(Si ~ Mi2)
 
-ggplot(Volume, aes(Mi, Vo)) +
-  geom_boxplot() +
-  facet_grid(~Si)
+x[is.na(x)] <- 0# make males 0, females 1
+sexratio$SexNum <- sexratio$Sex %>%
+  recode("F" = "1", "M" = "0")
+sexratio$SexNum <- as.numeric(sexratio$SexNum)
+
+model <- glm(SexNum ~ Mi2 + Si, family=binomial, data = sexratio)
+summary(model)
+# Call:
+# glm(formula = SexNum ~ Mi2 + Si, family = binomial, data = sexratio)
+
+# Deviance Residuals: 
+#   Min       1Q   Median       3Q      Max  
+# -1.1647  -0.9702  -0.9468   1.2163   1.4270  
+
+# Coefficients:
+#   Estimate Std. Error z value Pr(>|z|)   
+# (Intercept) -0.50901    0.15894  -3.203  0.00136 **
+#   Mi2P         0.47895    0.14671   3.265  0.00110 **
+#   SiMC        -0.06088    0.18873  -0.323  0.74701   
+# SiSC        -0.03718    0.19698  -0.189  0.85030   
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# (Dispersion parameter for binomial family taken to be 1)
+
+
 
 ###################################################################################
 # MORPHOLOGICAL CHARACTERS                                                        #
