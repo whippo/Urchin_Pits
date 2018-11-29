@@ -1,0 +1,142 @@
+This Urchin PIT tagging movement pilot readme file was generated on 20181123 by Ross Whippo,
+,
+_______________________________________,
+GENERAL INFORMATION,
+_______________________________________,
+,
+Title of dataset:,Urchin PIT tagging movement pilot
+,
+Author Information,
+,
+Principal Investigator Contact Information,
+Name:,Ross Whippo
+Institution:,Oregon Institute of Marine Biology
+Address:,"63466 Boat Basin Rd, Charleston, OR 97420, USA"
+Email:,rossw@uoregon.edu
+,
+Associate Investigator Contact Information,
+Name:,NA
+Institution:,NA
+Address:,NA
+Email:,NA
+,
+Alternate Contact Information,
+Name:,NA
+Institution:,NA
+Address:,NA
+Email:,rosspitality@gmail.com
+,
+"Date of data collection (single date, range, approximate date): ",20181101
+,
+Geographic location of data collection:,"Charleston, Oregon, USA"
+,
+Funding sources that supported the collection of the data: ,"NSF GRFP, Raymund Fellowship (UO)"
+,
+_______________________________________,
+SHARING/ACCESS INFORMATION,
+_______________________________________,
+,
+Licenses/restrictions placed on the data: ,NA
+,
+Links to publications that cite or use the data:,NA
+,
+Links to other publicly accessible location of the data:,NA
+,
+Links/relationships to ancillary data sets:,NA
+,
+Was data derived from another source?,NO
+"If yes, list source:",NA
+,
+Recommended citation for the data:,NA
+,
+_______________________________________,
+DATA/FILE OVERVIEW,
+_______________________________________,
+,
+File List,
+Filename:,201811_Urchin_PIT_tagging_lab_movement_pilot.csv
+Short description:,"Movement data of urchins tagged with PIT tags in the lab. Urchin 1 = bottom right urchin in tub 1, urchin 2 = upper right urchin in tub 1, urchin 3 = upper left tub 1, urchin 4 = lower right tub 2, Urchin 5 = upper right tub 2, urchin 6 upper left tub 2, Urchin 7 = lower right tub 3, urc hin 8 = upper right tub 3, urchin 9 = upper left tub 3, urchin 10 = bottom right tub 4, urchin 11 = top right tub 4, urchin 12 = top left tub 4"
+,
+Filename:,NA
+Short description:,NA
+,
+Filename:,NA
+Short description:,NA
+,
+Relationship between files:,NA
+,
+Additional related data collected that was not included in the current data package:,NA
+,
+Are there multiple versions of the dataset?,YES/NO
+"If yes, list versions",
+Name of file that was updated:,NA
+Why was the file updated?,NA
+When was the file updated?,NA
+Name of file that was updated:,NA
+Why was the file updated?,NA
+When was the file updated?,NA
+,
+_______________________________________,
+METHODOLOGICAL INFORMATION,
+_______________________________________,
+,
+Description of methods used for collection/generation of data:,METHODS
+<include links or references to publications or other documentation containing experimental design or protocols used in data collection>,
+,
+Methods for processing the data:,METHODS
+<describe how  the submitted data were generated from raw or collected data>,
+,
+Instrument- or software-specific information needed to interpret the data:,NA
+,
+"Standards and calibration information, if appropriate:",NA
+,
+Environmental/experimental conditions:,CONDITIONS
+,
+Describe any quality-assurance procedures performed on the data:,QAQC
+,
+"People involved with sample collection, processing, analysis and/or submission:",PARTICIPANTS
+,
+_______________________________________,
+DATA-SPECIFIC INFORMATION FOR: FILENAME,
+_______________________________________,
+<create sections for each dataset (or file if appropriate) included>,
+,
+Number of variables:,11
+,
+Number of cases/rows:,NUM ROWS
+,
+Variable List,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Name:,VARIABLE NAME
+Description:,VARIABLE DESCRIPTION
+Value labels:,IF APPROPRIATE
+,
+Missing data codes,
+Code/symbol:,CODE HERE
+Definition:,DEF HERE
+,
+Code/symbol:,NA
+Definition:,NA
+,
+Specialized formats of other abbreviations used:,NA
+,
+<<<<<<<<<<END OF METADATA>>>>>>>>>>,
